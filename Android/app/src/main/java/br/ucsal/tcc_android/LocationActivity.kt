@@ -15,7 +15,7 @@ import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 
 class LocationActivity : AppCompatActivity() {
-    
+
     private var startTime = 0L
     private var endTime = 0L
 
