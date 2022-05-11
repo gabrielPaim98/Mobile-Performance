@@ -38,14 +38,12 @@ class _AcelerometroViewState extends State<AcelerometroView> {
             InkWell(
               onTap: () {
                 _before = DateTime.now();
-                print('teste');
+
                 userAccelerometerEvents.listen((UserAccelerometerEvent event) {
+                  print('teste');
                   setState(() {
                     acceleration = event;
-                    print('teste1');
-                    if (event.x != 0.0 || event.y != 0.0 || event.z != 0.0) {
-                      _after = DateTime.now();
-                    }
+                    _after = DateTime.now();
                   });
                 });
               },
