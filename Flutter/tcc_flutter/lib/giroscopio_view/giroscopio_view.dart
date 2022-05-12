@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
@@ -12,6 +14,16 @@ class _GiroscopioViewState extends State<GiroscopioView> {
   DateTime? _before;
   DateTime? _after;
   GyroscopeEvent? _gyroscopeEvent;
+
+  StreamSubscription<GyroscopeEvent>? _streamSubscription;
+
+  bool first = false;
+  @override
+  void dispose() {
+    super.dispose();
+    if (_streamSubscription != null) _streamSubscription!.cancel();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,14 +43,18 @@ class _GiroscopioViewState extends State<GiroscopioView> {
             ),
             InkWell(
               onTap: () {
-                _before = DateTime.now();
+                if (!first) _before = DateTime.now();
                 print('teste');
-                gyroscopeEvents.listen((GyroscopeEvent event) {
+                _streamSubscription =
+                    gyroscopeEvents.listen((GyroscopeEvent event) {
                   setState(() {
-                    _gyroscopeEvent = event;
-                    print('teste1');
-                    if (_gyroscopeEvent != null) {
-                      _after = DateTime.now();
+                    if (!first) {
+                      _gyroscopeEvent = event;
+                      print('teste1');
+                      if (event.x != 0.0 || event.y != 0.0 || event.z != 0.0) {
+                        _after = DateTime.now();
+                      }
+                      first = true;
                     }
                   });
                 });

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
@@ -11,11 +13,18 @@ class AcelerometroView extends StatefulWidget {
 class _AcelerometroViewState extends State<AcelerometroView> {
   DateTime? _before;
   DateTime? _after;
-
+  bool first = false;
   UserAccelerometerEvent? acceleration;
+  StreamSubscription<UserAccelerometerEvent>? _streamSubscription;
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    if (_streamSubscription != null) _streamSubscription!.cancel();
   }
 
   @override
@@ -37,13 +46,19 @@ class _AcelerometroViewState extends State<AcelerometroView> {
             ),
             InkWell(
               onTap: () {
-                _before = DateTime.now();
-
-                userAccelerometerEvents.listen((UserAccelerometerEvent event) {
-                  print('teste');
+                if (!first) _before = DateTime.now();
+                print('teste');
+                _streamSubscription = userAccelerometerEvents
+                    .listen((UserAccelerometerEvent event) {
                   setState(() {
-                    acceleration = event;
-                    _after = DateTime.now();
+                    if (!first) {
+                      acceleration = event;
+                      print('teste1');
+                      if (event.x != 0.0 || event.y != 0.0 || event.z != 0.0) {
+                        _after = DateTime.now();
+                      }
+                      first = true;
+                    }
                   });
                 });
               },
